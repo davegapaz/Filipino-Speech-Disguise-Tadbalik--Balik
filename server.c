@@ -1,7 +1,6 @@
 #include "headers.h"
 
 int isVowel(char letter){
-    printf("HERE\n");
     if (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u'){
         return 1;
     }
@@ -13,7 +12,7 @@ int isVowel(char letter){
 char * Tadbalik(char tadbalik[], char client_message[], int len){
     printf("function\n");
     int temp = len;
-    char syll[50];
+    // char syll[50];
     int cnt = 0;
     
     for(int i=len-1; i>0; i--){
@@ -23,10 +22,21 @@ char * Tadbalik(char tadbalik[], char client_message[], int len){
             //check if element on its left is a consonant
             if(!isVowel(client_message[i-1])){
                 //i-1 to i+1 using sub.str
-                for(int j=i-1; j<temp; j++){
-                    syll[cnt++] = client_message[j];
+                //getting last syllable
+                for(int j=i-1; j<len; j++){
+                    printf("%d\n",j);
+                    tadbalik[cnt++] = client_message[j];
+                    
                 }
-                printf("%s\n", syll);
+                temp = i-1;
+                printf("gg\n");
+                //additing it to at the start of the word (process of baliktad)
+                for(int j=0; j<temp; j++){
+                    printf("%d\n",j);
+                    tadbalik[cnt++] = client_message[j];
+                }
+
+                return tadbalik;
                 temp = i-1;
 
                 i=i-2;
@@ -62,7 +72,7 @@ int main(void)
     
     // Initialize the server address by the port and IP:
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(2000);
+    server_addr.sin_port = htons(3000);
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     
     // Bind the socket descriptor to the server address (the port and IP):
@@ -117,8 +127,10 @@ int main(void)
         
         Tadbalik(tadbalik, client_message, len);
 
+
         // Respond to client:
-        strcpy(server_message, "This is the server's message.");
+        strcpy(server_message, tadbalik);
+
         
         if (send(client_sock, server_message, strlen(server_message), 0) < 0){
             printf("Can't send\n");
@@ -127,6 +139,7 @@ int main(void)
         
         // Clean buffers:
         memset(server_message, '\0', sizeof(server_message));
+        memset(tadbalik, '\0', sizeof(tadbalik));
         memset(client_message, '\0', sizeof(client_message));
     }
     
