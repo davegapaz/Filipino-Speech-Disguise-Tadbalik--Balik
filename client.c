@@ -2,12 +2,12 @@
 
 int main(void)
 {
-    // char ip[2000];
+    char ip[2000];
 
-    // //asks for ip address
-    // printf("Enter IP of the server to connect: ");
-    // fgets(ip,2000,stdin);
-    // ip[strcspn(ip,"\n")] =0;
+    //asks for ip address
+    printf("Enter IP of the server to connect: ");
+    fgets(ip,2000,stdin);
+    ip[strcspn(ip,"\n")] =0;
         
 
     int socket_desc;
@@ -30,8 +30,8 @@ int main(void)
     
     // Set port and IP the same as server-side:
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(3000);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_addr.sin_port = htons(5000);
+    server_addr.sin_addr.s_addr = inet_addr(ip);
     
     // Send a connection request to the server, which is waiting at accept():
     if(connect(socket_desc, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0){
@@ -48,7 +48,7 @@ int main(void)
         //remove newline from client message
         client_message[strcspn(client_message,"\n")] =0;
 
-        if(!strcmp(client_message,"EXIT")){
+        if(!strcmp(client_message,"stop")){
             printf("Goodbye.\n");
             // Close the socket:
             close(socket_desc);
@@ -67,12 +67,14 @@ int main(void)
             return -1;
         }
         
+        
         printf("Server's response: %s\n",server_message);
+        
+
         // Clean buffers:
         memset(server_message,'\0',sizeof(server_message));
         memset(client_message,'\0',sizeof(client_message));
     }
-    printf("LKU\n");
     
     return 0;
 }
